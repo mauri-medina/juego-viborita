@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 public class Vibora
 {
-
     public static enum Movimiento {IZQUIERDA, DERECHA, ARRIBA, ABAJO}
 
     private Movimiento movActual;
@@ -25,8 +24,8 @@ public class Vibora
     private Rectangle comida;
 
     private Timeline animacion;
-    private final double MAX_RATE = 5.0D;
-    private final double CAMBIO_EN_RATE = 0.5D;
+    private final double MAX_RATE = 5;
+    private final double CAMBIO_EN_RATE = 0.5;
 
     private PanelControlador panelDelJuego;
 
@@ -40,7 +39,7 @@ public class Vibora
     }
 
     /**
-     * Crea un rectangulo de posicion, tamaño y color
+     * Crea un rectangulo de posicion, tamaÃ±o y color
      * prederteminado para usar como cabeza
      */
     private void crearCabeza()
@@ -51,7 +50,7 @@ public class Vibora
     }
 
     /**
-     * Crea un rectangulo de posicion, tamaño y color
+     * Crea un rectangulo de posicion, tamaÃ±o y color
      * prederteminado para usar como comida
      */
     private void crearComida()
@@ -72,19 +71,19 @@ public class Vibora
     }
 
     /**
-     * Crea un rectangulo de posicion, tamaño y color
+     * Crea un rectangulo de posicion, tamaÃ±o y color
      * prederteminado para usar como una parte del cuerpo
      */
     private Rectangle getUnPedazodDeCuerpo()
     {
-        Rectangle cuerpo = new Rectangle(0., 0, TAMANO_CUERPO, TAMANO_CUERPO);
+        Rectangle cuerpo = new Rectangle(0, 0, TAMANO_CUERPO, TAMANO_CUERPO);
         cuerpo.setFill(Color.LIGHTGRAY);
         cuerpo.setStroke(Color.BLACK);
         return cuerpo;
     }
 
     /**
-     * Añade el pedazo del cuerpo al cuerpo entero, lo añade
+     * AÃ±ade el pedazo del cuerpo al cuerpo entero, lo aÃ±ade
      * a la matriz cuerpo y al panel del juego
      *
      * @param pedazo
@@ -111,6 +110,8 @@ public class Vibora
 
     public void disminuirVelocidad()
     {
+        //controlar que la animacion no pare(rate = 0)
+        // o vaya en reversa(rate < 0)
         if(animacion.getRate() - CAMBIO_EN_RATE > 0)
             animacion.setRate(animacion.getRate() - CAMBIO_EN_RATE);
 
@@ -135,7 +136,6 @@ public class Vibora
             case ABAJO:
                 moverAbajo();
         }
-
     }
 
     private void moverALaIzquierda()
@@ -169,9 +169,9 @@ public class Vibora
         double nuevaPosX = cabeza.getX() + dx;
         double nuevaPosY = cabeza.getY() + dy;
 
-        if(!viboraTrataDeMoverseAtras(nuevaPosX, nuevaPosY))
+        if(viboraTrataDeMoverseAtras(nuevaPosX, nuevaPosY))
         {
-            //hacer que siga moviendose adelante
+            //revertir el mov para que no vaya atras
             dx *= -1;
             dy *= -1;
         }
@@ -202,7 +202,6 @@ public class Vibora
         {
             terminarJuego();
         }
-
     }
 
     /**
@@ -224,13 +223,14 @@ public class Vibora
      */
     private boolean viboraTrataDeMoverseAtras(double futuroX, double futuroY)
     {
+        //si es solo la cabeza puede moverse a cualquier direccion
         if(cuerpo.size() == 0)
-            return true;
+            return false;
 
         else
         {
             Rectangle pedazo = cuerpo.get(0);
-            return pedazo.getX() != futuroX || pedazo.getY() != futuroY;
+            return pedazo.getX() == futuroX && pedazo.getY() == futuroY;
         }
     }
 
@@ -242,7 +242,6 @@ public class Vibora
      */
     private boolean estaCabezaSobreCuerpo()
     {
-
         for(Rectangle p:cuerpo)
         {
             if(p.getX() == cabeza.getX() && p.getY() == cabeza.getY())
@@ -279,34 +278,33 @@ public class Vibora
 
         while(estaComidaEnPosOcupada)
         {
-            while(estaComidaEnPosOcupada)
+            int posAproximadaX =
+                    (int)(Math.random() * (PanelControlador.ANCHO_JUEGO  - comida.getWidth()));
+            int posAproximadaY =
+                    (int)(Math.random() * (PanelControlador.ALTURA_JUEGO - comida.getHeight()));
+
+            //hacer que este en una posicion exacta
+            // dentro de las posibles posiciones para la vibora
+            int columna = posAproximadaX / TAMANO_CUERPO;
+            int fila = posAproximadaY / TAMANO_CUERPO;
+
+            nuevaPosX = columna * TAMANO_CUERPO;
+            nuevaPosY = fila * TAMANO_CUERPO;
+
+            //controlar que la comida no caiga en un lugar ocupado
+            //por la vibora
+            estaComidaEnPosOcupada = false;
+            for(Rectangle p:cuerpo)
             {
-                int posAproximadaX =
-                        (int)(Math.random() * (PanelControlador.ANCHO_JUEGO  - comida.getWidth()));
-                int posAproximadaY =
-                        (int)(Math.random() * (PanelControlador.ALTURA_JUEGO - comida.getHeight()));
-
-                //hacer que este en una posicion exacta
-                // dentro de las posibles posiciones para la vibora
-                int columna = posAproximadaX / TAMANO_CUERPO;
-                int fila = posAproximadaY / TAMANO_CUERPO;
-
-                nuevaPosX = columna * TAMANO_CUERPO;
-                nuevaPosY = fila * TAMANO_CUERPO;
-
-                estaComidaEnPosOcupada = false;
-                for(Rectangle p:cuerpo)
+                if(p.getX() == nuevaPosX && p.getY() == nuevaPosY)
                 {
-                    if(p.getX() == nuevaPosX && p.getY() == nuevaPosY)
-                    {
-                        estaComidaEnPosOcupada = true;
-                        break;
-                    }
+                    estaComidaEnPosOcupada = true;
+                    break;
                 }
             }
-
-            comida.setX((double)nuevaPosX);
-            comida.setY((double)nuevaPosY);
         }
+
+        comida.setX((double)nuevaPosX);
+        comida.setY((double)nuevaPosY);
     }
 }
