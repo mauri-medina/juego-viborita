@@ -36,11 +36,11 @@ public class PanelControlador extends Pane
     {
         Text texto = new Text(0, ALTURA_JUEGO/4, "GAME OVER");
         texto.setFill(Color.RED);
-        Font font = Font.font("", FontWeight.EXTRA_BOLD, 30.0D);
+        Font font = Font.font("", FontWeight.EXTRA_BOLD, 30);
         texto.setFont(font);
 
         Button boton = new Button("Otra vez");
-        boton.setLayoutX(0.0D);
+        boton.setLayoutX(0);
         boton.setLayoutY(ALTURA_JUEGO/2);
         boton.setOnAction((e) -> empezarJuego());
 
@@ -71,26 +71,28 @@ public class PanelControlador extends Pane
     private void crearPanelCuadriculado()
     {
         panelCuadriculado = new Pane();
-        int filas = ALTURA_JUEGO / Vibora.TAMANO_CUERPO;
-        int columnas = ANCHO_JUEGO / vibora.TAMANO_CUERPO;
+        int numDeFilas = ALTURA_JUEGO / Vibora.TAMANO_CUERPO;
+        int numDeColumnas = ANCHO_JUEGO / vibora.TAMANO_CUERPO;
         Color color = Color.LIGHTGRAY;
 
-        Line columna;
-        for(int i = 0; i < filas; ++i)
+        for(int fila = 0; fila < numDeFilas; ++fila)
         {
-            columna = new Line(0, (i * Vibora.TAMANO_CUERPO), ANCHO_JUEGO, (i * Vibora.TAMANO_CUERPO));
-            columna.setStroke(color);
-            panelCuadriculado.getChildren().add(columna);
+            Line lineaVertical = new Line(0, (fila * Vibora.TAMANO_CUERPO), ANCHO_JUEGO, (fila * Vibora.TAMANO_CUERPO));
+            lineaVertical.setStroke(color);
+            panelCuadriculado.getChildren().add(lineaVertical);
         }
 
-        for(int i = 0; i < columnas; ++i)
+        for(int columna = 0; columna < numDeColumnas; ++columna)
         {
-            columna = new Line((i * Vibora.TAMANO_CUERPO), 0, (i * Vibora.TAMANO_CUERPO), ALTURA_JUEGO);
-            columna.setStroke(color);
-            panelCuadriculado.getChildren().add(columna);
+            Line lineaHorizontal = new Line((columna * Vibora.TAMANO_CUERPO), 0, (columna * Vibora.TAMANO_CUERPO), ALTURA_JUEGO);
+            lineaHorizontal.setStroke(color);
+            panelCuadriculado.getChildren().add(lineaHorizontal);
         }
 
-        getChildren().add(panelCuadriculado);
+        //agrego en el primer lugar del observable list
+        //para que sea el primero en dibujarse y
+        // no tape a otros dibujos
+        getChildren().add(0,panelCuadriculado);
 
     }
 
@@ -107,7 +109,6 @@ public class PanelControlador extends Pane
             mostrarCuadriculado();
         else
             esconderCuadriculado();
-
     }
 
     class Input implements EventHandler<KeyEvent>
@@ -122,28 +123,32 @@ public class PanelControlador extends Pane
                 case W:
                     vibora.setMovActual(Vibora.Movimiento.ARRIBA);
                     break;
+
                 case DOWN:
                     vibora.setMovActual(Vibora.Movimiento.ABAJO);
                     break;
                 case S:
                     vibora.setMovActual(Vibora.Movimiento.ABAJO);
                     break;
+
                 case LEFT:
                     vibora.setMovActual(Vibora.Movimiento.IZQUIERDA);
                     break;
                 case A:
                     vibora.setMovActual(Vibora.Movimiento.IZQUIERDA);
                     break;
+
                 case RIGHT:
                     vibora.setMovActual(Vibora.Movimiento.DERECHA);
                     break;
                 case D:
                     vibora.setMovActual(Vibora.Movimiento.DERECHA);
                     break;
-                case ADD:
+
+                case ADD:                       //tecla con signo +
                     vibora.aumentarVelocidad();
                     break;
-                case SUBTRACT:
+                case SUBTRACT:                  //tecla con signo -
                     vibora.disminuirVelocidad();
                     break;
 
