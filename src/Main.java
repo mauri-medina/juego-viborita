@@ -9,7 +9,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application
 {
-    //al dibujar los paneles no se porque suma 10 unidades al tamaño deseado
+    //al dibujar los paneles no se porque suma 10 unidades al tamaÃ±o deseado
     private int alturaCorregida = PanelControlador.ALTURA_JUEGO-10;
     private int anchoCorregido = PanelControlador.ANCHO_JUEGO-10;
 
@@ -18,6 +18,11 @@ public class Main extends Application
         iniciarAplicacion(primaryStage);
     }
 
+    /**
+     * Crea un panel con un boton para iniciar el juego
+     *
+     * @param primaryStage
+     */
     private void iniciarAplicacion(Stage primaryStage)
     {
         BorderPane panelInicial = new BorderPane();
@@ -27,24 +32,29 @@ public class Main extends Application
         btn.setOnAction((e) -> iniciarJuego(primaryStage));
 
         primaryStage.setScene(new Scene(panelInicial, anchoCorregido, alturaCorregida));
+        primaryStage.setTitle("Vibora en JavaFx");
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
+    /**
+     * Empieza el juego, iniciando todos los elementos necesarios
+     *
+     * @param primaryStage
+     */
     private void iniciarJuego(Stage primaryStage)
     {
         PanelControlador panel = new PanelControlador();
 
         primaryStage.setScene(new Scene(panel, anchoCorregido, alturaCorregida));
-        primaryStage.setTitle("Vibora en JavaFx");
-        primaryStage.setResizable(false);
-        primaryStage.show();
 
         panel.setOnKeyReleased(panel.getControladorInput());
         panel.empezarJuego();
         panel.requestFocus();
     }
 
-    public static void main(String[] args) {
-        Application.launch(new String[0]);
+    public static void main(String[] args)
+    {
+        Application.launch();
     }
 }
